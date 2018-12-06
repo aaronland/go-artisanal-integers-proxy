@@ -71,7 +71,7 @@ For event more reporting set the `-loglevel` flag to `debug`.
 
 ## TO DO
 
-* Not in-memory integer pools (this is a [go-whosonfirst-pool](https://github.com/whosonfirst/go-whosonfirst-pool) thing but relevant here), for example a RDBMS or equivalent
+* Support alternative (beyond in-memory) integer pools (this is a [go-whosonfirst-pool](https://github.com/whosonfirst/go-whosonfirst-pool) thing but relevant here), for example a RDBMS or equivalent
 * Support other integer providers, beyond Brooklyn Integers (this is a [go-artisanal-integers](https://github.com/aaronland/go-artisanal-integers) thing)
 * AWS Lambda support
 
