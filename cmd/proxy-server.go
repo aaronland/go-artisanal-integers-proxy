@@ -52,7 +52,7 @@ func main() {
 			return
 		}
 
-		io.WriteString(rsp, strconv.Itoa(int(i)))
+		io.WriteString(rsp, strconv.FormatInt(i, 10))
 	}
 
 	http.HandleFunc("/", handler)
