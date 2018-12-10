@@ -12,6 +12,10 @@ make bin
 
 All of this package's dependencies are bundled with the code in the `vendor` directory.
 
+## Important
+
+This package _will be renamed or deprecated_ in order to be integer-provider agnostic (read: support more than just Brooklyn Integers).
+
 ## Tools
 
 ### proxy-server
