@@ -19,7 +19,7 @@ import (
 func main() {
 
 	var port = flag.Int("port", 8080, "Port to listen")
-	var min = flag.Int("min", 5, "The minimum number of Brooklyn Integers to keep on hand at all times")
+	var min = flag.Int("min", 5, "The minimum number of artisanal integers to keep on hand at all times")
 	var loglevel = flag.String("loglevel", "info", "Log level")
 	var cors = flag.Bool("cors", false, "Enable CORS headers")
 
@@ -38,8 +38,27 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	pr := proxy.NewProxy(cl, pl, int64(*min), logger)
-	pr.Init()
+	opts, err := proxy.DefaultProxyOptions()
+
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	opts.Logger = logger
+	opts.Pool = pl
+	opts.Minimum = *min
+
+	pr, err := proxy.NewProxy(opts, cl)
+
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	err = pr.Init()
+
+	if err != nil {
+		logger.Fatal(err)
+	}
 
 	handler := func(rsp http.ResponseWriter, r *http.Request) {
 

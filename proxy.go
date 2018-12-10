@@ -9,20 +9,49 @@ import (
 	"time"
 )
 
+type ProxyOptions struct {
+	Pool    pool.LIFOPool
+	Minimum int
+	Logger  *log.WOFLogger
+}
+
+func DefaultProxyOptions() (*ProxyOptions, error) {
+
+	pl, err := pool.NewMemLIFOPool()
+
+	if err != nil {
+	   return nil, err
+	}
+
+	logger := log.NewWOFLogger()
+
+	opts := ProxyOptions{
+		Pool: pl,
+		Logger: logger,
+		Minimum: 10,
+	}
+
+	return &opts, nil
+}
+
+// sudo make this support the artisanalinteger.Server interface
+
 type Proxy struct {
-	logger  *log.WOFLogger
-	client  artisanalinteger.Client
-	pool    pool.LIFOPool
-	minpool int64
+     	options *ProxyOptions
+	clients  []artisanalinteger.Client
 	refill  chan bool
 }
 
-func NewProxy(cl artisanalinteger.Client, pl pool.LIFOPool, min_pool int64, logger *log.WOFLogger) *Proxy {
+func NewProxy(opts *ProxyOptions, clients ...artisanalinteger.Client) (*Proxy, error) {
+
+        if len(clients) == 0 {
+     	return nil, errors.New("Insuffient clients")
+     }
 
 	// See notes in RefillPool() for details
 
-	size := 10
-	refill := make(chan bool, 10)
+	size := opts.Minimum
+	refill := make(chan bool, size)
 
 	for i := 0; i < size; i++ {
 		refill <- true
@@ -32,22 +61,21 @@ func NewProxy(cl artisanalinteger.Client, pl pool.LIFOPool, min_pool int64, logg
 	// and cache hits/misses/etc
 
 	proxy := Proxy{
-		logger:  logger,
-		client:  cl,
-		pool:    pl,
-		minpool: min_pool,
+		options: opts,
+		clients:  clients,
 		refill:  refill,
 	}
 
-	return &proxy
+	return &proxy, nil
 }
 
-func (p *Proxy) Init() {
+func (p *Proxy) Init() error {
 
 	go p.RefillPool()
-
 	go p.Status()
 	go p.Monitor()
+
+	return nil
 }
 
 func (p *Proxy) Status() {
@@ -55,7 +83,7 @@ func (p *Proxy) Status() {
 	for {
 		select {
 		case <-time.After(5 * time.Second):
-			p.logger.Status("pool length: %d", p.pool.Length())
+			p.options.Logger.Status("pool length: %d", p.options.Pool.Length())
 		}
 	}
 }
@@ -65,7 +93,7 @@ func (p *Proxy) Monitor() {
 	for {
 		select {
 		case <-time.After(10 * time.Second):
-			if p.pool.Length() < p.minpool {
+			if p.options.Pool.Length() < int64(p.options.Minimum) {
 				go p.RefillPool()
 			}
 		}
@@ -89,8 +117,8 @@ func (p *Proxy) RefillPool() {
 	// But that also means tracking what we think the current load means so we
 	// aren't going to do that now...
 
-	todo := p.minpool - p.pool.Length()
-	workers := int(p.minpool / 2)
+	todo := int64(p.options.Minimum) - p.options.Pool.Length()
+	workers := int(p.options.Minimum / 2)
 
 	if workers == 0 {
 		workers = 1
@@ -109,7 +137,7 @@ func (p *Proxy) RefillPool() {
 
 	wg := new(sync.WaitGroup)
 
-	p.logger.Debug("refill poll w/ %d integers and %d workers", todo, workers)
+	p.options.Logger.Debug("refill poll w/ %d integers and %d workers", todo, workers)
 
 	success := 0
 	failed := 0
@@ -129,8 +157,8 @@ func (p *Proxy) RefillPool() {
 
 		// First check that we still actually need to keep fetching integers
 
-		if p.pool.Length() >= p.minpool {
-			p.logger.Debug("pool is full (%d) stopping after %d iterations", p.pool.Length(), j)
+		if p.options.Pool.Length() >= int64(p.options.Minimum) {
+			p.options.Logger.Debug("pool is full (%d) stopping after %d iterations", p.options.Pool.Length(), j)
 			break
 		}
 
@@ -157,7 +185,7 @@ func (p *Proxy) RefillPool() {
 	p.refill <- true
 
 	t2 := time.Since(t1)
-	p.logger.Info("time to refill the pool with %d integers (success: %d failed: %d): %v (pool length is now %d)", todo, success, failed, t2, p.pool.Length())
+	p.options.Logger.Info("time to refill the pool with %d integers (success: %d failed: %d): %v (pool length is now %d)", todo, success, failed, t2, p.options.Pool.Length())
 
 }
 
@@ -171,43 +199,45 @@ func (p *Proxy) AddToPool() bool {
 
 	pi := pool.NewIntItem(i)
 
-	p.pool.Push(pi)
+	p.options.Pool.Push(pi)
 	return true
 }
 
 func (p *Proxy) GetInteger() (int64, error) {
 
-	i, err := p.client.NextInt()
+     	cl := p.clients[0]	// round-robin me or something...
+
+	i, err := cl.NextInt()
 
 	if err != nil {
-		p.logger.Error("failed to create new integer, because %v", err)
+		p.options.Logger.Error("failed to create new integer, because %v", err)
 		return 0, err
 	}
 
-	p.logger.Debug("got new integer %d", i)
+	p.options.Logger.Debug("got new integer %d", i)
 	return i, nil
 }
 
 func (p *Proxy) Integer() (int64, error) {
 
-	if p.pool.Length() == 0 {
+	if p.options.Pool.Length() == 0 {
 
 		go p.RefillPool()
 
-		p.logger.Warning("pool length is 0 so fetching integer from source")
+		p.options.Logger.Warning("pool length is 0 so fetching integer from source")
 		return p.GetInteger()
 	}
 
-	v, ok := p.pool.Pop()
+	v, ok := p.options.Pool.Pop()
 
 	if !ok {
-		p.logger.Error("failed to pop integer!")
+		p.options.Logger.Error("failed to pop integer!")
 		return 0, errors.New("Failed to pop")
 	}
 
 	i := v.Int()
 
-	p.logger.Debug("return cached integer %d", i)
+	p.options.Logger.Debug("return cached integer %d", i)
 
 	return i, nil
 }
