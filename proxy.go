@@ -2,7 +2,7 @@ package proxy
 
 import (
        "errors"
-	"github.com/aaronland/go-brooklynintegers-api"
+	"github.com/aaronland/go-artisanal-integers"
 	"github.com/whosonfirst/go-whosonfirst-log"
 	"github.com/whosonfirst/go-whosonfirst-pool"
 	"sync"
@@ -10,17 +10,14 @@ import (
 )
 
 type Proxy struct {
-     	// maybe make this an artisanal integer interface...
 	logger  *log.WOFLogger
-	client  *api.APIClient
+	client  artisanalinteger.Client
 	pool    pool.LIFOPool
 	minpool int64
 	refill  chan bool
 }
 
-func NewProxy(pl pool.LIFOPool, min_pool int64, logger *log.WOFLogger) *Proxy {
-
-	api_client := api.NewAPIClient()
+func NewProxy(cl artisanalinteger.Client, pl pool.LIFOPool, min_pool int64, logger *log.WOFLogger) *Proxy {
 
 	// See notes in RefillPool() for details
 
@@ -36,7 +33,7 @@ func NewProxy(pl pool.LIFOPool, min_pool int64, logger *log.WOFLogger) *Proxy {
 
 	proxy := Proxy{
 		logger:  logger,
-		client:  api_client,
+		client:  cl,
 		pool:    pl,
 		minpool: min_pool,
 		refill:  refill,
@@ -180,7 +177,7 @@ func (p *Proxy) AddToPool() bool {
 
 func (p *Proxy) GetInteger() (int64, error) {
 
-	i, err := p.client.CreateInteger()
+	i, err := p.client.NextInt()
 
 	if err != nil {
 		p.logger.Error("failed to create new integer, because %v", err)

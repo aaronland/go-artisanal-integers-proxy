@@ -3,6 +3,7 @@ package api
 import (
 	"errors"
 	"fmt"
+	"github.com/aaronland/go-artisanal-integers"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
 	_ "log"
@@ -10,12 +11,23 @@ import (
 	"net/url"
 )
 
+// this is basically just so we can preserve backwards compatibility
+// even though the artisanalinteger.Client interface is the new new
+// (20181210/thisisaaronland)
+
+type BrooklynIntegersClient interface {
+	CreateInteger() (int64, error)
+	ExecuteMethod(string, *url.Values) (*APIResponse, error)
+}
+
 type APIClient struct {
-	isa      string
-	http_client *http.Client
-	Scheme   string
-	Host     string
-	Endpoint string
+	artisanalinteger.Client
+	BrooklynIntegersClient // see above
+	isa                    string
+	http_client            *http.Client
+	Scheme                 string
+	Host                   string
+	Endpoint               string
 }
 
 type APIError struct {
@@ -86,19 +98,23 @@ func (rsp *APIResponse) Error() error {
 	return &err
 }
 
-func NewAPIClient() *APIClient {
+func NewAPIClient() artisanalinteger.Client {
 
 	http_client := &http.Client{}
 
 	return &APIClient{
-		Scheme:   "https",
-		Host:     "api.brooklynintegers.com",
-		Endpoint: "rest/",
+		Scheme:      "https",
+		Host:        "api.brooklynintegers.com",
+		Endpoint:    "rest/",
 		http_client: http_client,
 	}
 }
 
 func (client *APIClient) CreateInteger() (int64, error) {
+	return client.NextInt()
+}
+
+func (client *APIClient) NextInt() (int64, error) {
 
 	params := url.Values{}
 	method := "brooklyn.integers.create"

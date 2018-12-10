@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/aaronland/go-brooklynintegers-api"
 	"github.com/aaronland/go-brooklynintegers-proxy"
 	"github.com/whosonfirst/go-whosonfirst-log"
 	"github.com/whosonfirst/go-whosonfirst-pool"
@@ -29,13 +30,15 @@ func main() {
 	logger := log.NewWOFLogger("[big-integer] ")
 	logger.AddLogger(writer, *loglevel)
 
+	cl := api.NewAPIClient()
+
 	pl, err := pool.NewMemLIFOPool()
 
 	if err != nil {
 		logger.Fatal(err)
 	}
 
-	pr := proxy.NewProxy(pl, int64(*min), logger)
+	pr := proxy.NewProxy(cl, pl, int64(*min), logger)
 	pr.Init()
 
 	handler := func(rsp http.ResponseWriter, r *http.Request) {
