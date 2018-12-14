@@ -4,7 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/aaronland/go-brooklynintegers-api"
-	"github.com/aaronland/go-brooklynintegers-proxy"
+	"github.com/aaronland/go-brooklynintegers-proxy/service"
+	// "github.com/aaronland/go-brooklynintegers-proxy/server"
 	"github.com/whosonfirst/go-whosonfirst-log"
 	"github.com/whosonfirst/go-whosonfirst-pool"
 	"io"
@@ -38,7 +39,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	opts, err := proxy.DefaultProxyOptions()
+	opts, err := service.DefaultProxyServiceOptions()
 
 	if err != nil {
 		logger.Fatal(err)
@@ -48,21 +49,18 @@ func main() {
 	opts.Pool = pl
 	opts.Minimum = *min
 
-	pr, err := proxy.NewProxy(opts, cl)
+	pr, err := service.NewProxyService(opts, cl)
 
 	if err != nil {
 		logger.Fatal(err)
 	}
 
-	err = pr.Init()
-
-	if err != nil {
-		logger.Fatal(err)
-	}
+	// svr, err := server.NewProxyServer()
+	// svr.ListenAndServe(pr)
 
 	handler := func(rsp http.ResponseWriter, r *http.Request) {
 
-		i, err := pr.Integer()
+		i, err := pr.NextInt()
 
 		if err != nil {
 			msg := fmt.Sprintf("Failed to retrieve integer because %v", err)

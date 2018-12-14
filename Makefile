@@ -5,6 +5,7 @@ self:   prep
 	if test -d src; then rm -rf src; fi
 	mkdir -p src/github.com/aaronland/go-brooklynintegers-proxy
 	cp *.go src/github.com/aaronland/go-brooklynintegers-proxy/
+	cp -r service src/github.com/aaronland/go-brooklynintegers-proxy/
 	cp -r vendor/* src/
 
 rmdeps:
@@ -25,6 +26,7 @@ vendor-deps: rmdeps deps
 
 fmt:
 	go fmt cmd/*.go
+	go fmt service/*.go
 
 bin:	self
 	@GOPATH=$(shell pwd) go build -o bin/proxy-server cmd/proxy-server.go
