@@ -3,15 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/aaronland/go-artisanal-integers/server"
 	"github.com/aaronland/go-brooklynintegers-api"
 	"github.com/aaronland/go-brooklynintegers-proxy/service"
-	// "github.com/aaronland/go-brooklynintegers-proxy/server"
 	"github.com/whosonfirst/go-whosonfirst-log"
 	"github.com/whosonfirst/go-whosonfirst-pool"
 	"io"
-	"net/http"
+	"net/url"
 	"os"
-	"strconv"
 )
 
 // this needs to be tweaked to keep a not-just-in-memory copy of the
@@ -19,10 +18,10 @@ import (
 
 func main() {
 
-	var port = flag.Int("port", 8080, "Port to listen")
+	var host = flag.String("host", "localhost", "Host to listen on")
+	var port = flag.Int("port", 8080, "Port to listen on")
 	var min = flag.Int("min", 5, "The minimum number of artisanal integers to keep on hand at all times")
 	var loglevel = flag.String("loglevel", "info", "Log level")
-	var cors = flag.Bool("cors", false, "Enable CORS headers")
 
 	flag.Parse()
 
@@ -55,33 +54,26 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	// svr, err := server.NewProxyServer()
-	// svr.ListenAndServe(pr)
-
-	handler := func(rsp http.ResponseWriter, r *http.Request) {
-
-		i, err := pr.NextInt()
-
-		if err != nil {
-			msg := fmt.Sprintf("Failed to retrieve integer because %v", err)
-			http.Error(rsp, msg, http.StatusBadRequest)
-		}
-
-		if *cors {
-			rsp.Header().Set("Access-Control-Allow-Origin", "*")
-			return
-		}
-
-		io.WriteString(rsp, strconv.FormatInt(i, 10))
-	}
-
-	http.HandleFunc("/", handler)
-
-	str_port := ":" + strconv.Itoa(*port)
-	err = http.ListenAndServe(str_port, nil)
+	addr := fmt.Sprintf("http://%s:%d", *host, *port)
+	u, err := url.Parse(addr)
 
 	if err != nil {
-		logger.Fatal("Failed to start server, because %v\n", err)
+		logger.Fatal(err)
 	}
 
+	svr, err := server.NewHTTPServer(u)
+
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	logger.Status("Listening for requests on %s", svr.Address())
+
+	err = svr.ListenAndServe(pr)
+
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	os.Exit(0)
 }
