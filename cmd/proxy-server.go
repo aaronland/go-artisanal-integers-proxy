@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/aaronland/go-artisanal-integers"
 	"github.com/aaronland/go-artisanal-integers/server"
 	"github.com/aaronland/go-brooklynintegers-api"
 	"github.com/aaronland/go-brooklynintegers-proxy/service"
@@ -13,9 +14,6 @@ import (
 	"os"
 )
 
-// this needs to be tweaked to keep a not-just-in-memory copy of the
-// pool so that we can use this in offline-mode (20181206/thisisaaronland)
-
 func main() {
 
 	var protocol = flag.String("protocol", "http", "...")
@@ -24,6 +22,8 @@ func main() {
 	var min = flag.Int("min", 5, "The minimum number of artisanal integers to keep on hand at all times")
 	var loglevel = flag.String("loglevel", "info", "Log level")
 
+	var brooklyn_integers = flag.Bool("brooklyn-integers", true, "...")
+
 	flag.Parse()
 
 	writer := io.MultiWriter(os.Stdout)
@@ -31,13 +31,31 @@ func main() {
 	logger := log.NewWOFLogger("[big-integer] ")
 	logger.AddLogger(writer, *loglevel)
 
-	cl := api.NewAPIClient()
+	// set up one or more clients to proxy integers from
+
+	clients := make([]artisanalinteger.Client, 0)
+
+	if *brooklyn_integers {
+		cl := api.NewAPIClient()
+		clients = append(clients, cl)
+	}
+
+	if len(clients) == 0 {
+		logger.Fatal("Insufficient clients")
+	}
+
+	// set up a local pool for proxied integers
+
+	// this needs to be tweaked to keep a not-just-in-memory copy of the
+	// pool so that we can use this in offline-mode (20181206/thisisaaronland)
 
 	pl, err := pool.NewMemLIFOPool()
 
 	if err != nil {
 		logger.Fatal(err)
 	}
+
+	// set up the proxy service
 
 	opts, err := service.DefaultProxyServiceOptions()
 
@@ -49,11 +67,13 @@ func main() {
 	opts.Pool = pl
 	opts.Minimum = *min
 
-	pr, err := service.NewProxyService(opts, cl)
+	pr, err := service.NewProxyService(opts, clients...)
 
 	if err != nil {
 		logger.Fatal(err)
 	}
+
+	// set up the actual server endpoint
 
 	addr := fmt.Sprintf("%s://%s:%d", *protocol, *host, *port)
 	u, err := url.Parse(addr)
@@ -67,6 +87,8 @@ func main() {
 	if err != nil {
 		logger.Fatal(err)
 	}
+
+	// go!
 
 	logger.Status("Listening for requests on %s", svr.Address())
 
