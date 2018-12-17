@@ -18,6 +18,7 @@ import (
 
 func main() {
 
+	var protocol = flag.String("protocol", "http", "...")
 	var host = flag.String("host", "localhost", "Host to listen on")
 	var port = flag.Int("port", 8080, "Port to listen on")
 	var min = flag.Int("min", 5, "The minimum number of artisanal integers to keep on hand at all times")
@@ -54,14 +55,14 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	addr := fmt.Sprintf("http://%s:%d", *host, *port)
+	addr := fmt.Sprintf("%s://%s:%d", *protocol, *host, *port)
 	u, err := url.Parse(addr)
 
 	if err != nil {
 		logger.Fatal(err)
 	}
 
-	svr, err := server.NewHTTPServer(u)
+	svr, err := server.NewArtisanalServer(*protocol, u)
 
 	if err != nil {
 		logger.Fatal(err)
