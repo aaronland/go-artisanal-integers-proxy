@@ -31,6 +31,8 @@ Usage of ./bin/proxy-server:
     	    Log level. (default "info")
   -min int
        The minimum number of artisanal integers to keep on hand at all times. (default 5)
+  -mission-integers
+	Use Mission Integers as an artisanal integer source. (default true)
   -port int
     	Port to listen on. (default 8080)
   -protocol string
@@ -82,13 +84,13 @@ For event more reporting set the `-loglevel` flag to `debug`.
 ## TO DO
 
 * Support alternative integer pools (this is a [go-whosonfirst-pool](https://github.com/whosonfirst/go-whosonfirst-pool) thing), for example a RDBMS or equivalent; currently only in-memory pools are available
-* Support other integer providers, beyond Brooklyn Integers (this is a [go-artisanal-integers](https://github.com/aaronland/go-artisanal-integers) thing)
 * AWS Lambda support
 
 ## See also
 
-* http://brooklynintegers.com/
-* http://brooklynintegers.com/api
+* https://brooklynintegers.com/
+* https://missionintegers.com/
 * https://github.com/aaronland/go-brooklynintegers-api
+* https://github.com/aaronland/go-missionintegers-api
 * https://github.com/aaronland/go-artisanal-integers
 * https://github.com/whosonfirst/go-whosonfirst-pool

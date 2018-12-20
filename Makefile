@@ -13,6 +13,7 @@ rmdeps:
 
 deps:
 	@GOPATH=$(shell pwd) go get "github.com/aaronland/go-brooklynintegers-api"
+	@GOPATH=$(shell pwd) go get "github.com/aaronland/go-missionintegers-api"
 	@GOPATH=$(shell pwd) go get "github.com/whosonfirst/go-whosonfirst-pool"
 	@GOPATH=$(shell pwd) go get "github.com/whosonfirst/go-whosonfirst-log"
 	mv src/github.com/aaronland/go-brooklynintegers-api/vendor/github.com/aaronland/go-artisanal-integers src/github.com/aaronland/

@@ -5,9 +5,17 @@ import (
 	"github.com/aaronland/go-artisanal-integers"
 	"github.com/whosonfirst/go-whosonfirst-log"
 	"github.com/whosonfirst/go-whosonfirst-pool"
+	"math/rand"
 	"sync"
 	"time"
 )
+
+var r *rand.Rand
+
+func init() {
+
+	r = rand.New(rand.NewSource(time.Now().UnixNano()))
+}
 
 type ProxyServiceOptions struct {
 	Pool    pool.LIFOPool
@@ -199,7 +207,9 @@ func (p *ProxyService) addToPool() bool {
 
 func (p *ProxyService) getInteger() (int64, error) {
 
-	cl := p.clients[0] // round-robin me or something...
+	idx := r.Intn(len(p.clients))
+
+	cl := p.clients[idx] // round-robin me or something...
 
 	i, err := cl.NextInt()
 
