@@ -3,9 +3,9 @@ prep:
 
 self:   prep
 	if test -d src; then rm -rf src; fi
-	mkdir -p src/github.com/aaronland/go-brooklynintegers-proxy
-	cp *.go src/github.com/aaronland/go-brooklynintegers-proxy/
-	cp -r service src/github.com/aaronland/go-brooklynintegers-proxy/
+	mkdir -p src/github.com/aaronland/go-artisanal-integers-proxy
+	cp *.go src/github.com/aaronland/go-artisanal-integers-proxy/
+	cp -r service src/github.com/aaronland/go-artisanal-integers-proxy/
 	cp -r vendor/* src/
 
 rmdeps:

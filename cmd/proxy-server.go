@@ -6,7 +6,7 @@ import (
 	"github.com/aaronland/go-artisanal-integers"
 	"github.com/aaronland/go-artisanal-integers/server"
 	"github.com/aaronland/go-brooklynintegers-api"
-	"github.com/aaronland/go-brooklynintegers-proxy/service"
+	"github.com/aaronland/go-artisanal-integers-proxy/service"
 	"github.com/whosonfirst/go-whosonfirst-log"
 	"github.com/whosonfirst/go-whosonfirst-pool"
 	"io"
