@@ -16,7 +16,7 @@ All of this package's dependencies are bundled with the code in the `vendor` dir
 
 ### proxy-server
 
-Proxy, pre-load and buffer requests to the Brooklyn Integers `brooklyn.integers.create` API method. No, really.
+Proxy, pre-load and buffer requests to one or more artisanal integer services "create an integer" API endpoints. No, really.
 
 ```
 > ./bin/proxy-server -h
