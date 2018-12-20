@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/aaronland/go-artisanal-integers"
+	"github.com/aaronland/go-artisanal-integers-proxy/service"
 	"github.com/aaronland/go-artisanal-integers/server"
 	"github.com/aaronland/go-brooklynintegers-api"
-	"github.com/aaronland/go-artisanal-integers-proxy/service"
 	"github.com/whosonfirst/go-whosonfirst-log"
 	"github.com/whosonfirst/go-whosonfirst-pool"
 	"io"
@@ -16,19 +16,19 @@ import (
 
 func main() {
 
-	var protocol = flag.String("protocol", "http", "...")
-	var host = flag.String("host", "localhost", "Host to listen on")
-	var port = flag.Int("port", 8080, "Port to listen on")
-	var min = flag.Int("min", 5, "The minimum number of artisanal integers to keep on hand at all times")
-	var loglevel = flag.String("loglevel", "info", "Log level")
+	var protocol = flag.String("protocol", "http", "The protocol to use for the proxy server.")
+	var host = flag.String("host", "localhost", "Host to listen on.")
+	var port = flag.Int("port", 8080, "Port to listen on.")
+	var min = flag.Int("min", 5, "The minimum number of artisanal integers to keep on hand at all times.")
+	var loglevel = flag.String("loglevel", "info", "Log level.")
 
-	var brooklyn_integers = flag.Bool("brooklyn-integers", true, "...")
+	var brooklyn_integers = flag.Bool("brooklyn-integers", true, "Use Brooklyn Integers as an artisanal integer source.")
 
 	flag.Parse()
 
 	writer := io.MultiWriter(os.Stdout)
 
-	logger := log.NewWOFLogger("[big-integer] ")
+	logger := log.NewWOFLogger("[proxy-server] ")
 	logger.AddLogger(writer, *loglevel)
 
 	// set up one or more clients to proxy integers from
