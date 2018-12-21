@@ -22,17 +22,19 @@ Proxy, pre-load and buffer requests to one or more artisanal integer services "c
 > ./bin/proxy-server -h
 Usage of ./bin/proxy-server:
   -brooklyn-integers
-	Use Brooklyn Integers as an artisanal integer source. (default true)
+	Use Brooklyn Integers as an artisanal integer source. (default false)
   -host string
     	Host to listen on. (default "localhost")
   -httptest.serve string
     		  if non-empty, httptest.NewServer serves on this address and blocks
   -loglevel string
     	    Log level. (default "info")
+  -london-integers
+	Use London Integers as an artisanal integer source. (default false)
   -min int
        The minimum number of artisanal integers to keep on hand at all times. (default 5)
   -mission-integers
-	Use Mission Integers as an artisanal integer source. (default true)
+	Use Mission Integers as an artisanal integer source. (default false)
   -port int
     	Port to listen on. (default 8080)
   -protocol string
@@ -42,7 +44,7 @@ Usage of ./bin/proxy-server:
 As in:
 
 ```
-./bin/proxy-server -min 100
+./bin/proxy-server -brooklyn-integers -min 100
 [proxy-server] 02:47:44.029143 [error] failed to create new integer, because invalid character '<' looking for beginning of value
 ...remaining errors excluded for brevity
 
@@ -90,7 +92,9 @@ For event more reporting set the `-loglevel` flag to `debug`.
 
 * https://brooklynintegers.com/
 * https://missionintegers.com/
+* http://londonintegers.com/
 * https://github.com/aaronland/go-brooklynintegers-api
+* https://github.com/aaronland/go-londonintegers-api
 * https://github.com/aaronland/go-missionintegers-api
 * https://github.com/aaronland/go-artisanal-integers
 * https://github.com/whosonfirst/go-whosonfirst-pool

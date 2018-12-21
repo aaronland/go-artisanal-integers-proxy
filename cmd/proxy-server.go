@@ -7,6 +7,7 @@ import (
 	"github.com/aaronland/go-artisanal-integers-proxy/service"
 	"github.com/aaronland/go-artisanal-integers/server"
 	brooklyn_api "github.com/aaronland/go-brooklynintegers-api"
+	london_api "github.com/aaronland/go-londonintegers-api"
 	mission_api "github.com/aaronland/go-missionintegers-api"
 	"github.com/whosonfirst/go-whosonfirst-log"
 	"github.com/whosonfirst/go-whosonfirst-pool"
@@ -23,8 +24,9 @@ func main() {
 	var min = flag.Int("min", 5, "The minimum number of artisanal integers to keep on hand at all times.")
 	var loglevel = flag.String("loglevel", "info", "Log level.")
 
-	var brooklyn_integers = flag.Bool("brooklyn-integers", true, "Use Brooklyn Integers as an artisanal integer source.")
-	var mission_integers = flag.Bool("mission-integers", true, "Use Mission Integers as an artisanal integer source.")
+	var brooklyn_integers = flag.Bool("brooklyn-integers", false, "Use Brooklyn Integers as an artisanal integer source.")
+	var london_integers = flag.Bool("london-integers", false, "Use London Integers as an artisanal integer source.")
+	var mission_integers = flag.Bool("mission-integers", false, "Use Mission Integers as an artisanal integer source.")
 
 	flag.Parse()
 
@@ -39,6 +41,11 @@ func main() {
 
 	if *brooklyn_integers {
 		cl := brooklyn_api.NewAPIClient()
+		clients = append(clients, cl)
+	}
+
+	if *london_integers {
+		cl := london_api.NewAPIClient()
 		clients = append(clients, cl)
 	}
 
