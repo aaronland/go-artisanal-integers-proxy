@@ -88,6 +88,7 @@ For event more reporting set the `-loglevel` flag to `debug`.
 By default the `proxy-server` uses an in-memory pool to store integers. There are alternative proxy server implementations that use persistent datastores for integer pools. They are:
 
 * https://github.com/aaronland/go-artisanal-integers-proxy-redis
+* https://github.com/aaronland/go-artisanal-integers-proxy-sqlite
 
 ## TO DO
 
