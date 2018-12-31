@@ -44,6 +44,7 @@ func DefaultProxyServiceOptions() (*ProxyServiceOptions, error) {
 
 type ProxyService struct {
 	artisanalinteger.Service
+	artisanalinteger.Client
 	options *ProxyServiceOptions
 	clients []artisanalinteger.Client
 	refill  chan bool
