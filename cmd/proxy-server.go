@@ -2,17 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"github.com/aaronland/go-artisanal-integers"
-	"github.com/aaronland/go-artisanal-integers-proxy/service"
-	"github.com/aaronland/go-artisanal-integers/server"
-	brooklyn_api "github.com/aaronland/go-brooklynintegers-api"
-	london_api "github.com/aaronland/go-londonintegers-api"
-	mission_api "github.com/aaronland/go-missionintegers-api"
+	"github.com/aaronland/go-artisanal-integers-proxy"
 	"github.com/whosonfirst/go-whosonfirst-log"
 	"github.com/whosonfirst/go-whosonfirst-pool"
 	"io"
-	"net/url"
 	"os"
 )
 
@@ -32,36 +25,8 @@ func main() {
 
 	writer := io.MultiWriter(os.Stdout)
 
-	logger := log.NewWOFLogger("[proxy-server] ")
+	logger := log.NewWOFLogger("[proxy-server]")
 	logger.AddLogger(writer, *loglevel)
-
-	// set up one or more clients to proxy integers from
-
-	clients := make([]artisanalinteger.Client, 0)
-
-	if *brooklyn_integers {
-		cl := brooklyn_api.NewAPIClient()
-		clients = append(clients, cl)
-	}
-
-	if *london_integers {
-		cl := london_api.NewAPIClient()
-		clients = append(clients, cl)
-	}
-
-	if *mission_integers {
-		cl := mission_api.NewAPIClient()
-		clients = append(clients, cl)
-	}
-
-	if len(clients) == 0 {
-		logger.Fatal("Insufficient clients")
-	}
-
-	// set up a local pool for proxied integers
-
-	// this needs to be tweaked to keep a not-just-in-memory copy of the
-	// pool so that we can use this in offline-mode (20181206/thisisaaronland)
 
 	pl, err := pool.NewMemLIFOPool()
 
@@ -69,44 +34,32 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	// set up the proxy service
+	svc_args := proxy.ProxyServiceArgs{
+		BrooklynIntegers: *brooklyn_integers,
+		LondonIntegers:   *london_integers,
+		MissionIntegers:  *mission_integers,
+		MinCount:         *min,
+		// Logger: logger,
+	}
 
-	opts, err := service.DefaultProxyServiceOptions()
+	svc, err := proxy.NewProxyServiceWithPool(pl, svc_args)
+
+	svr_args := proxy.ProxyServerArgs{
+		Protocol: *protocol,
+		Host:     *host,
+		Port:     *port,
+		// Logger: logger,
+	}
+
+	svr, err := proxy.NewProxyServerWithService(svc, svr_args)
 
 	if err != nil {
 		logger.Fatal(err)
 	}
-
-	opts.Logger = logger
-	opts.Pool = pl
-	opts.Minimum = *min
-
-	pr, err := service.NewProxyService(opts, clients...)
-
-	if err != nil {
-		logger.Fatal(err)
-	}
-
-	// set up the actual server endpoint
-
-	addr := fmt.Sprintf("%s://%s:%d", *protocol, *host, *port)
-	u, err := url.Parse(addr)
-
-	if err != nil {
-		logger.Fatal(err)
-	}
-
-	svr, err := server.NewArtisanalServer(*protocol, u)
-
-	if err != nil {
-		logger.Fatal(err)
-	}
-
-	// go!
 
 	logger.Status("Listening for requests on %s", svr.Address())
 
-	err = svr.ListenAndServe(pr)
+	err = svr.ListenAndServe(svc)
 
 	if err != nil {
 		logger.Fatal(err)
