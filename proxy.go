@@ -1,7 +1,6 @@
 package proxy
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"github.com/aaronland/go-artisanal-integers"
@@ -26,12 +25,6 @@ type ProxyServiceArgs struct {
 	MissionIntegers  bool `json:"mission_integers"`
 	MinCount         int  `json:"min_count"`
 }
-
-type ProxyServiceResponse struct {
-	Integer int64 `json:"integer"`
-}
-
-type ProxyServiceLambdaFunc func(context.Context, ProxyServiceArgs) (*ProxyServiceResponse, error)
 
 func NewProxyServiceWithPool(pl pool.LIFOPool, args ProxyServiceArgs) (artisanalinteger.Service, error) {
 
@@ -66,32 +59,6 @@ func NewProxyServiceWithPool(pl pool.LIFOPool, args ProxyServiceArgs) (artisanal
 	}
 
 	return service.NewProxyService(opts, clients...)
-}
-
-func NewProxyServiceLambdaFunc(pl pool.LIFOPool) (ProxyServiceLambdaFunc, error) {
-
-	f := func(ctx context.Context, args ProxyServiceArgs) (*ProxyServiceResponse, error) {
-
-		svc, err := NewProxyServiceWithPool(pl, args)
-
-		if err != nil {
-			return nil, err
-		}
-
-		i, err := svc.NextInt()
-
-		if err != nil {
-			return nil, err
-		}
-
-		rsp := ProxyServiceResponse{
-			Integer: i,
-		}
-
-		return &rsp, nil
-	}
-
-	return f, nil
 }
 
 func NewProxyServerWithService(svc artisanalinteger.Service, args ProxyServerArgs) (artisanalinteger.Server, error) {
