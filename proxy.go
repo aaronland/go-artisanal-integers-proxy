@@ -25,7 +25,7 @@ type ProxyServiceArgs struct {
 	LondonIntegers   bool           `json:"london_integers"`
 	MissionIntegers  bool           `json:"mission_integers"`
 	MinCount         int            `json:"min_count"`
-	Logger           *log.WOFLogger `json:""`
+	Logger           *log.WOFLogger `json:",omitempty"`
 }
 
 func NewProxyServiceWithPool(pl pool.LIFOPool, args ProxyServiceArgs) (artisanalinteger.Service, error) {
