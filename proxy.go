@@ -9,6 +9,7 @@ import (
 	brooklyn_api "github.com/aaronland/go-brooklynintegers-api"
 	london_api "github.com/aaronland/go-londonintegers-api"
 	mission_api "github.com/aaronland/go-missionintegers-api"
+	"github.com/whosonfirst/go-whosonfirst-log"
 	"github.com/whosonfirst/go-whosonfirst-pool"
 	"net/url"
 )
@@ -20,10 +21,11 @@ type ProxyServerArgs struct {
 }
 
 type ProxyServiceArgs struct {
-	BrooklynIntegers bool `json:"brooklyn_integers"`
-	LondonIntegers   bool `json:"london_integers"`
-	MissionIntegers  bool `json:"mission_integers"`
-	MinCount         int  `json:"min_count"`
+	BrooklynIntegers bool           `json:"brooklyn_integers"`
+	LondonIntegers   bool           `json:"london_integers"`
+	MissionIntegers  bool           `json:"mission_integers"`
+	MinCount         int            `json:"min_count"`
+	Logger           *log.WOFLogger `json:""`
 }
 
 func NewProxyServiceWithPool(pl pool.LIFOPool, args ProxyServiceArgs) (artisanalinteger.Service, error) {
@@ -36,6 +38,10 @@ func NewProxyServiceWithPool(pl pool.LIFOPool, args ProxyServiceArgs) (artisanal
 
 	opts.Pool = pl
 	opts.Minimum = args.MinCount
+
+	if args.Logger != nil {
+		opts.Logger = args.Logger
+	}
 
 	clients := make([]artisanalinteger.Client, 0)
 
