@@ -89,6 +89,7 @@ By default the `proxy-server` uses an in-memory pool to store integers. There ar
 
 * https://github.com/aaronland/go-artisanal-integers-proxy-redis
 * https://github.com/aaronland/go-artisanal-integers-proxy-sqlite
+* https://github.com/aaronland/go-artisanal-integers-proxy-boltdb
 
 ## TO DO
 
