@@ -237,7 +237,9 @@ func (p *ProxyService) NextInt() (int64, error) {
 
 	if !ok {
 		p.options.Logger.Error("failed to pop integer!")
-		return 0, errors.New("Failed to pop")
+
+		go p.refillPool()
+		return p.getInteger()
 	}
 
 	i := v.Int()
