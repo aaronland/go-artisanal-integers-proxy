@@ -1,0 +1,25 @@
+# github.com/aaronland/go-artisanal-integers v0.1.0
+github.com/aaronland/go-artisanal-integers
+github.com/aaronland/go-artisanal-integers/server
+github.com/aaronland/go-artisanal-integers/client
+github.com/aaronland/go-artisanal-integers/service
+github.com/aaronland/go-artisanal-integers/application
+github.com/aaronland/go-artisanal-integers/engine
+github.com/aaronland/go-artisanal-integers/http
+github.com/aaronland/go-artisanal-integers/utils
+# github.com/aaronland/go-brooklynintegers-api v1.0.1
+github.com/aaronland/go-brooklynintegers-api
+# github.com/aaronland/go-londonintegers-api v0.1.0
+github.com/aaronland/go-londonintegers-api
+# github.com/aaronland/go-missionintegers-api v0.1.0
+github.com/aaronland/go-missionintegers-api
+# github.com/tidwall/gjson v1.2.1
+github.com/tidwall/gjson
+# github.com/tidwall/match v1.0.1
+github.com/tidwall/match
+# github.com/tidwall/pretty v0.0.0-20190325153808-1166b9ac2b65
+github.com/tidwall/pretty
+# github.com/whosonfirst/go-whosonfirst-log v0.1.0
+github.com/whosonfirst/go-whosonfirst-log
+# github.com/whosonfirst/go-whosonfirst-pool v0.1.0
+github.com/whosonfirst/go-whosonfirst-pool
