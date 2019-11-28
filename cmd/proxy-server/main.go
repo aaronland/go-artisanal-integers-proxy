@@ -1,10 +1,11 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"github.com/aaronland/go-artisanal-integers-proxy"
 	"github.com/whosonfirst/go-whosonfirst-log"
-	"github.com/whosonfirst/go-whosonfirst-pool"
+	"github.com/aaronland/go-pool"
 	"io"
 	"os"
 )
@@ -23,12 +24,14 @@ func main() {
 
 	flag.Parse()
 
+	ctx := context.Background()
+	
 	writer := io.MultiWriter(os.Stdout)
 
 	logger := log.NewWOFLogger("[proxy-server]")
 	logger.AddLogger(writer, *loglevel)
 
-	pl, err := pool.NewMemLIFOPool()
+	pl, err := pool.NewPool(ctx, "memory://")
 
 	if err != nil {
 		logger.Fatal(err)
@@ -44,6 +47,16 @@ func main() {
 
 	svc, err := proxy.NewProxyServiceWithPool(pl, svc_args)
 
+	if err != nil {
+		logger.Fatal(err)
+	}
+	
+	_, err = svc.NextInt()
+
+	if err != nil {
+		logger.Fatal(err)
+	}
+	
 	svr_args := proxy.ProxyServerArgs{
 		Protocol: *protocol,
 		Host:     *host,

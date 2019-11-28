@@ -10,7 +10,7 @@ import (
 	london_api "github.com/aaronland/go-londonintegers-api"
 	mission_api "github.com/aaronland/go-missionintegers-api"
 	"github.com/whosonfirst/go-whosonfirst-log"
-	"github.com/whosonfirst/go-whosonfirst-pool"
+	"github.com/aaronland/go-pool"
 	"net/url"
 )
 
@@ -28,7 +28,7 @@ type ProxyServiceArgs struct {
 	Logger           *log.WOFLogger `json:",omitempty"`
 }
 
-func NewProxyServiceWithPool(pl pool.LIFOPool, args ProxyServiceArgs) (artisanalinteger.Service, error) {
+func NewProxyServiceWithPool(pl pool.Pool, args ProxyServiceArgs) (artisanalinteger.Service, error) {
 
 	opts, err := service.DefaultProxyServiceOptions()
 

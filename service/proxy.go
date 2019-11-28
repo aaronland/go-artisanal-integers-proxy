@@ -1,10 +1,11 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"github.com/aaronland/go-artisanal-integers"
 	"github.com/whosonfirst/go-whosonfirst-log"
-	"github.com/whosonfirst/go-whosonfirst-pool"
+	"github.com/aaronland/go-pool"
 	"math/rand"
 	"sync"
 	"time"
@@ -18,14 +19,15 @@ func init() {
 }
 
 type ProxyServiceOptions struct {
-	Pool    pool.LIFOPool
+	Pool    pool.Pool
 	Minimum int
 	Logger  *log.WOFLogger
 }
 
 func DefaultProxyServiceOptions() (*ProxyServiceOptions, error) {
 
-	pl, err := pool.NewMemLIFOPool()
+	ctx := context.Background()
+	pl, err := pool.NewPool(ctx, "memory://")
 
 	if err != nil {
 		return nil, err
