@@ -26,6 +26,7 @@ type ProxyServiceArgs struct {
 	MissionIntegers  bool           `json:"mission_integers"`
 	MinCount         int            `json:"min_count"`
 	Logger           *log.WOFLogger `json:",omitempty"`
+	Workers          int            `json:"workers"`
 }
 
 func NewProxyServiceWithPool(pl pool.Pool, args ProxyServiceArgs) (artisanalinteger.Service, error) {
@@ -38,6 +39,7 @@ func NewProxyServiceWithPool(pl pool.Pool, args ProxyServiceArgs) (artisanalinte
 
 	opts.Pool = pl
 	opts.Minimum = args.MinCount
+	opts.Workers = args.Workers
 
 	if args.Logger != nil {
 		opts.Logger = args.Logger
