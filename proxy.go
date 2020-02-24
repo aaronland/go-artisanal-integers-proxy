@@ -9,8 +9,8 @@ import (
 	brooklyn_api "github.com/aaronland/go-brooklynintegers-api"
 	london_api "github.com/aaronland/go-londonintegers-api"
 	mission_api "github.com/aaronland/go-missionintegers-api"
-	"github.com/whosonfirst/go-whosonfirst-log"
 	"github.com/aaronland/go-pool"
+	"github.com/whosonfirst/go-whosonfirst-log"
 	"net/url"
 )
 
