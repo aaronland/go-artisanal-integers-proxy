@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/aaronland/go-artisanal-integers-proxy"
-	"github.com/aaronland/go-pool"
-	"github.com/whosonfirst/go-whosonfirst-log"
 	"io"
 	"os"
+
+	proxy "github.com/aaronland/go-artisanal-integers-proxy"
+	"github.com/aaronland/go-pool"
+	log "github.com/whosonfirst/go-whosonfirst-log"
 )
 
 func main() {
