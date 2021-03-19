@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/aaronland/go-artisanal-integers-proxy"
-	"github.com/whosonfirst/go-whosonfirst-log"
-	"github.com/aaronland/go-pool"
 	"io"
 	"os"
+	
+	"github.com/aaronland/go-artisanal-integers-proxy"
+	"github.com/aaronland/go-pool"
+	"github.com/whosonfirst/go-whosonfirst-log"	
 )
 
 func main() {
@@ -25,7 +26,7 @@ func main() {
 	flag.Parse()
 
 	ctx := context.Background()
-	
+
 	writer := io.MultiWriter(os.Stdout)
 
 	logger := log.NewWOFLogger("[proxy-server]")
@@ -50,13 +51,13 @@ func main() {
 	if err != nil {
 		logger.Fatal(err)
 	}
-	
+
 	_, err = svc.NextInt()
 
 	if err != nil {
 		logger.Fatal(err)
 	}
-	
+
 	svr_args := proxy.ProxyServerArgs{
 		Protocol: *protocol,
 		Host:     *host,
