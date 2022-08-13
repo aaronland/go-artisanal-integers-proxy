@@ -5,10 +5,10 @@ import (
 	"flag"
 	"io"
 	"os"
-	
-	"github.com/aaronland/go-artisanal-integers-proxy"
+
+	proxy "github.com/aaronland/go-artisanal-integers-proxy"
 	"github.com/aaronland/go-pool"
-	"github.com/whosonfirst/go-whosonfirst-log"	
+	log "github.com/whosonfirst/go-whosonfirst-log"
 )
 
 func main() {

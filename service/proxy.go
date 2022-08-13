@@ -3,12 +3,13 @@ package service
 import (
 	"context"
 	"errors"
-	"github.com/aaronland/go-artisanal-integers"
-	"github.com/aaronland/go-pool"
-	"github.com/whosonfirst/go-whosonfirst-log"
 	"math/rand"
 	"sync"
 	"time"
+
+	artisanalinteger "github.com/aaronland/go-artisanal-integers"
+	"github.com/aaronland/go-pool"
+	log "github.com/whosonfirst/go-whosonfirst-log"
 )
 
 var r *rand.Rand
