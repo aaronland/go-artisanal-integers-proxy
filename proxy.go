@@ -3,15 +3,16 @@ package proxy
 import (
 	"errors"
 	"fmt"
-	"github.com/aaronland/go-artisanal-integers"
+	"net/url"
+
+	artisanalinteger "github.com/aaronland/go-artisanal-integers"
 	"github.com/aaronland/go-artisanal-integers-proxy/service"
 	"github.com/aaronland/go-artisanal-integers/server"
 	brooklyn_api "github.com/aaronland/go-brooklynintegers-api"
 	london_api "github.com/aaronland/go-londonintegers-api"
 	mission_api "github.com/aaronland/go-missionintegers-api"
 	"github.com/aaronland/go-pool"
-	"github.com/whosonfirst/go-whosonfirst-log"
-	"net/url"
+	log "github.com/whosonfirst/go-whosonfirst-log"
 )
 
 type ProxyServerArgs struct {
